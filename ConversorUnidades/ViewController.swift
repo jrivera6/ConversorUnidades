@@ -8,11 +8,11 @@
 
 import UIKit
 
-class ViewController: UIViewController{
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource{
 
     var delegate = (UIApplication.shared.delegate as! AppDelegate)
     
-//    var medidas : [Medida] = []
+    var medidas : [Medida] = []
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -20,27 +20,39 @@ class ViewController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        tableView.dataSource = self
-//        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.delegate = self
         
     }
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let medida = medidas[indexPath.row]
-//    }
-//
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return medidas.count
-//    }
-//
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = UITableViewCell()
-//
-//        let medida = medidas[indexPath.row]
-////        cell.textLabel?.text = medida.inicio
-////        cell.textLabel?.text = medida.convertido
-//        return cell
-//    }
+    override func viewWillAppear(_ animated: Bool) {
+        let context = delegate.persistentContainer.viewContext
+        
+        do{
+            medidas = try context.fetch(Medida.fetchRequest())
+            tableView.reloadData()
+        }catch{}
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let medida = medidas[indexPath.row]
+        
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return medidas.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = UITableViewCell()
+
+        let medida = medidas[indexPath.row]
+        cell.textLabel?.text = "\(medida.inicio!) = \(medida.valorInicial) - \(medida.convertido!) = \(medida.valorConvetido)"
+//        cell.detailTextLabel?.text = "Prueba"
+//        cell.textLabel?.text = medida.convertido
+        return cell
+    }
 
 
 }
